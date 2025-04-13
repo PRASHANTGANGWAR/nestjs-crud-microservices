@@ -7,6 +7,9 @@ import databaseConfig from '@config/database.config'
 import { DatabaseModule } from '@database/database.module'
 import { UserController } from '@user/user.controller';
 import { UserService } from '@user/user.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '@models/users';
+import { UserModule } from '@user/user.module';
 
 @Module({
   imports: [
@@ -15,6 +18,8 @@ import { UserService } from '@user/user.service';
       load: [databaseConfig],
     }),
     DatabaseModule,
+    TypeOrmModule.forFeature([User]),
+    UserModule
   ],
   controllers: [AppController, UserController],
   providers: [AppService, UserService],

@@ -11,10 +11,17 @@ async function bootstrap() {
     .setTitle('Your API Title')
     .setDescription('Your API description')
     .setVersion('1.0')
-    .addServer('http://localhost:3000/', 'Local environment')
-    .addServer('https://staging.yourapi.com/', 'Staging')
-    .addServer('https://production.yourapi.com/', 'Production')
+    .addServer('http://localhost:3000', 'User Service')
+    .addServer('http://localhost:3000/products', 'Product Service')
     .addTag('Your API Tag')
+    .addApiKey(
+      {
+        type: 'apiKey',
+        in: 'header',
+        name: 'x-api-key',
+      },
+      'internalApiKey'
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
