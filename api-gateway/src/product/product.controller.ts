@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ProductService } from './product.service';
+import { AddProductDto, UpdateStockDto } from '@/dto/product.dto';
 
 @Controller('products')
 export class ProductController {
@@ -10,7 +11,7 @@ export class ProductController {
   ) { }
 
   @Post()
-  async addProduct(@Body() addProductDto: any) {
+  async addProduct(@Body() addProductDto: AddProductDto) {
     const productServiceUrl = this.configService.get<string>('api_gateway.product_service_url');
     if (!productServiceUrl) {
       throw new HttpException('Product Service URL is not configured.', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -28,7 +29,7 @@ export class ProductController {
   }
 
   @Patch(':id/stock')
-  async updateStock(@Param('id') id: string, @Body() updateStockDto: any) {
+  async updateStock(@Param('id') id: string, @Body() updateStockDto: UpdateStockDto) {
     const baseUrl = this.configService.get<string>('api_gateway.product_service_url');
     if (!baseUrl) {
       throw new HttpException('Product Service URL is not configured.', HttpStatus.INTERNAL_SERVER_ERROR);

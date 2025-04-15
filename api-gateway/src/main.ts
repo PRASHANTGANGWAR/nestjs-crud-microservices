@@ -2,18 +2,18 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Setup Swagger
   const options = new DocumentBuilder()
-    .setTitle('Your API Title')
-    .setDescription('Your API description')
+    .setTitle('Microservices API Gateway')
+    .setDescription('API Gateway for User and Product Microservices')
     .setVersion('1.0')
-    .addServer('http://localhost:3000', 'User Service')
-    .addServer('http://localhost:3000/products', 'Product Service')
-    .addTag('Your API Tag')
+    .addTag('users')
+    .addServer('http://localhost:3000', 'Development')
     .addApiKey(
       {
         type: 'apiKey',
@@ -25,7 +25,14 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api-docs', app, document);
+  SwaggerModule.setup('api-docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  });
+  app.useGlobalPipes(new ValidationPipe());
 
   // Get port from configuration and start the app
   const configService = app.get(ConfigService);
