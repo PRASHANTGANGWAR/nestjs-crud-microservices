@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: pg-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+
+  userservice:
+    build: ./user-service
+    restart: unless-stopped
+    env_file:
+      - ./user-service/.env
+    depends_on:
+      - postgres
+    volumes:
+      - ./user-service:/app
+    command: npm run start:dev
+
+  productservice:
+    build: ./product-service
+    restart: unless-stopped
+    env_file:
+      - ./product-service/.env
+    depends_on:
+      - postgres
+    volumes:
+      - ./product-service:/app
+    command: npm run start:dev
+
+  apigate:
+    build: ./api-gateway
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - userservice
+      - productservice
+    volumes:
+      - ./api-gateway:/app
+    command: npm run start:dev
+
+volumes:
+  pgdata:

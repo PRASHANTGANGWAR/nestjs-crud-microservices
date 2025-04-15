@@ -1,5 +1,5 @@
 # Use official Node.js runtime as the base image
-FROM node:18-alpine
+FROM node:22-alpine
 
 # Create app directory
 WORKDIR /app
@@ -18,4 +18,4 @@ RUN npm run build
 EXPOSE 3002
 
 # Run the built app
-CMD ["node", "dist/main"]
+CMD ["npm", "run", "start:dev"]
